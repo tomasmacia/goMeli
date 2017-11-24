@@ -44,7 +44,7 @@ func main() {
 
 			tweet := service.GetTweet()
 
-			c.Println(tweet)
+			c.Println(tweet.User + ": " + tweet.Text + " (" + tweet.Date.Format("01-02-2006") + ")")
 
 			return
 		},
