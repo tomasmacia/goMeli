@@ -3,19 +3,20 @@ package service_test
 import (
 	"testing"
 
-	"github.com/goMeli/src/domain"
-	"github.com/goMeli/src/service"
+	"github.com/curso/goMeli/src/domain"
+	"github.com/curso/goMeli/src/service"
 )
 
 func TestPublishedTweetIsSaved(t *testing.T) {
 
 	// Initialization
 	var tweet *domain.Tweet
+	var user *domain.User
 
-	user := "grupoEsfera"
+	user = domain.NewUser("grupoEsfera")
 	text := "This is my first tweet"
 
-	tweet = domain.NewTweet(user, text)
+	tweet = domain.NewTweet(*user, text)
 
 	// Operation
 	service.PublishTweet(tweet)
@@ -23,13 +24,39 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 	// Validation
 	publishedTweet := service.GetTweet()
 
-	if publishedTweet.User != user &&
+	if publishedTweet.User != *user &&
 		publishedTweet.Text != text {
 		t.Errorf("Expected tweet is %s: %s \nbut is %s: %s",
-			user, text, publishedTweet.User, publishedTweet.Text)
+			*user, text, publishedTweet.User, publishedTweet.Text)
 	}
 
 	if publishedTweet.Date == nil {
 		t.Error("Expected date can't be nil")
+	}
+}
+
+func TestTweetWithoutTextisNotPublished(t *testing.T) {
+
+	// Initialization
+	var tweet *domain.Tweet
+	var user *domain.User
+
+	user = domain.NewUser("grupoEsfera")
+	var text string
+
+	tweet = domain.NewTweet(*user, text)
+
+	// Operation
+	var err error
+	err = service.PublishTweet(tweet)
+
+	// Validation
+	if err == nil {
+		t.Error("Expected error")
+		return
+	}
+
+	if err.Error() != "text is required" {
+		t.Errorf("Expected error is text is required")
 	}
 }

@@ -1,7 +1,9 @@
 package service
 
 import (
-	"github.com/goMeli/src/domain"
+	"fmt"
+
+	"github.com/curso/goMeli/src/domain"
 
 	"time"
 )
@@ -14,8 +16,12 @@ func GetTweet() *domain.Tweet {
 }
 
 // PublishTweet publish tweet
-func PublishTweet(tweetToPublish *domain.Tweet) {
+func PublishTweet(tweetToPublish *domain.Tweet) (err error) {
+	if tweetToPublish.Text == "" {
+		err = fmt.Errorf("text is required")
+	}
 	tweet = tweetToPublish
 	nowDate := time.Now()
 	tweet.Date = &nowDate
+	return
 }

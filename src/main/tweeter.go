@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/abiosoft/ishell"
-	"github.com/goMeli/src/domain"
-	"github.com/goMeli/src/service"
+	"github.com/curso/goMeli/src/domain"
+	"github.com/curso/goMeli/src/service"
 )
 
 func main() {
@@ -21,13 +23,18 @@ func main() {
 
 			c.Print("Write your user: ")
 
-			user := c.ReadLine()
+			username := c.ReadLine()
+			user := domain.NewUser(username)
 
 			c.Print("Write your tweet: ")
 
 			tweet := c.ReadLine()
 
-			service.PublishTweet(domain.NewTweet(user, tweet))
+			err := service.PublishTweet(domain.NewTweet(*user, tweet))
+
+			if err != nil {
+				fmt.Println(err.Error())
+			}
 
 			c.Print("Tweet sent\n")
 
@@ -44,7 +51,7 @@ func main() {
 
 			tweet := service.GetTweet()
 
-			c.Println(tweet.User + ": " + tweet.Text + " (" + tweet.Date.Format("01-02-2006") + ")")
+			c.Println(tweet.User.Name + ": " + tweet.Text + " (" + tweet.Date.Format("01-02-2006") + ")")
 
 			return
 		},
