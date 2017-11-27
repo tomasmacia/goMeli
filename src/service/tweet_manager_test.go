@@ -10,6 +10,7 @@ import (
 func TestPublishedTweetIsSaved(t *testing.T) {
 
 	// Initialization
+	service.InitializeService()
 	var tweet *domain.Tweet
 	var user *domain.User
 
@@ -32,6 +33,33 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 
 	if publishedTweet.Date == nil {
 		t.Error("Expected date can't be nil")
+	}
+}
+
+func TestTweetWithoutTextisNotPublished(t *testing.T) {
+
+	// Initialization
+	service.InitializeService()
+	var tweet *domain.Tweet
+	var user *domain.User
+
+	user = domain.NewUser("grupoEsfera")
+	var text string
+
+	tweet = domain.NewTweet(*user, text)
+
+	// Operation
+	var err error
+	err = service.PublishTweet(tweet)
+
+	// Validation
+	if err == nil {
+		t.Error("Expected error")
+		return
+	}
+
+	if err.Error() != "text is required" {
+		t.Errorf("Expected error is text is required")
 	}
 }
 
