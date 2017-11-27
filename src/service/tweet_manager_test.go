@@ -22,7 +22,7 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 	service.PublishTweet(tweet)
 
 	// Validation
-	publishedTweet := service.GetTweet()
+	publishedTweet := service.GetTweets()[0]
 
 	if publishedTweet.User != *user &&
 		publishedTweet.Text != text {
@@ -35,28 +35,48 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 	}
 }
 
-func TestTweetWithoutTextisNotPublished(t *testing.T) {
+func TestTweetsTwoDifferentsWithoutTweets(t *testing.T) {
 
 	// Initialization
-	var tweet *domain.Tweet
+	service.InitializeService()
+
+	var tweet, secondTweet *domain.Tweet
 	var user *domain.User
 
 	user = domain.NewUser("grupoEsfera")
-	var text string
+	text := "This is my first tweet"
+	secondText := "This is my second tweet"
 
 	tweet = domain.NewTweet(*user, text)
+	secondTweet = domain.NewTweet(*user, secondText)
 
 	// Operation
-	var err error
-	err = service.PublishTweet(tweet)
+	service.PublishTweet(tweet)
+	service.PublishTweet(secondTweet)
 
 	// Validation
-	if err == nil {
-		t.Error("Expected error")
+	publishedTweets := service.GetTweets()
+
+	if len(publishedTweets) != 2 {
+		t.Errorf("Expected size is 2 but was %d", len(publishedTweets))
 		return
 	}
 
-	if err.Error() != "text is required" {
-		t.Errorf("Expected error is text is required")
+	firstPublishedTweet := publishedTweets[0]
+	secondPublishedTweet := publishedTweets[1]
+
+	if !isValidTweet(t, firstPublishedTweet, user, text) {
+		t.Error("First tweet has incorrect information")
+		return
 	}
+
+	if !isValidTweet(t, secondPublishedTweet, user, secondText) {
+		t.Error("Second tweet has incorrect information")
+		return
+	}
+
+}
+
+func isValidTweet(t *testing.T, tweet *domain.Tweet, user *domain.User, text string) bool {
+	return tweet.User == *user && tweet.Text == text
 }

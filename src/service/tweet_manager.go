@@ -8,11 +8,16 @@ import (
 	"time"
 )
 
-var tweet *domain.Tweet
+var tweets []*domain.Tweet
 
-// GetTweet returns last tweet
-func GetTweet() *domain.Tweet {
-	return tweet
+// InitializeService clears the tweets history
+func InitializeService() {
+	tweets = tweets[:0]
+}
+
+// GetTweets returns last tweet
+func GetTweets() []*domain.Tweet {
+	return tweets
 }
 
 // PublishTweet publish tweet
@@ -20,8 +25,8 @@ func PublishTweet(tweetToPublish *domain.Tweet) (err error) {
 	if tweetToPublish.Text == "" {
 		err = fmt.Errorf("text is required")
 	}
-	tweet = tweetToPublish
 	nowDate := time.Now()
-	tweet.Date = &nowDate
+	tweetToPublish.Date = &nowDate
+	tweets = append(tweets, tweetToPublish)
 	return
 }
