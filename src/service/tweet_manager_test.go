@@ -50,7 +50,7 @@ func TestTweetWithoutTextisNotPublished(t *testing.T) {
 
 	// Operation
 	var err error
-	err = service.PublishTweet(tweet)
+	_, err = service.PublishTweet(tweet)
 
 	// Validation
 	if err == nil {
@@ -93,18 +93,40 @@ func TestTweetsTwoDifferentsWithoutTweets(t *testing.T) {
 	firstPublishedTweet := publishedTweets[0]
 	secondPublishedTweet := publishedTweets[1]
 
-	if !isValidTweet(t, firstPublishedTweet, user, text) {
+	if !isValidTweet(t, firstPublishedTweet, firstPublishedTweet.Id, user, text) {
 		t.Error("First tweet has incorrect information")
 		return
 	}
 
-	if !isValidTweet(t, secondPublishedTweet, user, secondText) {
+	if !isValidTweet(t, secondPublishedTweet, secondPublishedTweet.Id, user, secondText) {
 		t.Error("Second tweet has incorrect information")
 		return
 	}
 
 }
 
-func isValidTweet(t *testing.T, tweet *domain.Tweet, user *domain.User, text string) bool {
-	return tweet.User == *user && tweet.Text == text
+func TestCanRetrieveTweetsById(t *testing.T) {
+
+	// Inicializacion
+	service.InitializeService()
+
+	var tweet *domain.Tweet
+	var id int
+
+	user := *domain.NewUser("grupoEsfera")
+	text := "This is my first tweet"
+
+	tweet = domain.NewTweet(user, text)
+
+	// Operation
+	id, _ = service.PublishTweet(tweet)
+
+	// Validation
+	publishedTweet := service.GetTweetsById(id)
+
+	isValidTweet(t, publishedTweet, 0, &user, text)
+}
+
+func isValidTweet(t *testing.T, tweet *domain.Tweet, id int, user *domain.User, text string) bool {
+	return tweet.User == *user && tweet.Text == text && tweet.Id == id
 }
