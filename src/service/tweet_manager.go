@@ -8,12 +8,12 @@ import (
 	"time"
 )
 
-var tweets map[domain.User][]*domain.Tweet
+var tweets map[*domain.User][]*domain.Tweet
 var nextId int
 
 // InitializeService clears the tweets history
 func InitializeService() {
-	tweets = make(map[domain.User][]*domain.Tweet)
+	tweets = make(map[*domain.User][]*domain.Tweet)
 	nextId = 0
 }
 
@@ -66,5 +66,5 @@ func GetTweetsById(id int) []*domain.Tweet {
 
 // GetTweetsByUser gets tweets by user
 func GetTweetsByUser(user *domain.User) []*domain.Tweet {
-	return tweets[*user]
+	return tweets[user]
 }

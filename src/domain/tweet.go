@@ -5,7 +5,7 @@ import "time"
 // Tweet Type Tweet which contains user and text of tweet
 type Tweet struct {
 	Id   int
-	User User
+	User *User
 	Text string
 	Date *time.Time
 }
@@ -16,7 +16,7 @@ type User struct {
 }
 
 // NewTweet creates and returns a tweet
-func NewTweet(user User, text string) *Tweet {
+func NewTweet(user *User, text string) *Tweet {
 	return &Tweet{0, user, text, nil}
 }
 

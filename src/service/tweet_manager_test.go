@@ -18,7 +18,7 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 	user = domain.NewUser("grupoEsfera")
 	text := "This is my first tweet"
 
-	tweet = domain.NewTweet(*user, text)
+	tweet = domain.NewTweet(user, text)
 
 	// Operation
 	service.PublishTweet(tweet)
@@ -26,7 +26,7 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 	// Validation
 	publishedTweet := service.GetTweets()[0]
 
-	if publishedTweet.User != *user &&
+	if publishedTweet.User != user &&
 		publishedTweet.Text != text {
 		t.Errorf("Expected tweet is %s: %s \nbut is %s: %s",
 			*user, text, publishedTweet.User, publishedTweet.Text)
@@ -47,7 +47,7 @@ func TestTweetWithoutTextisNotPublished(t *testing.T) {
 	user = domain.NewUser("grupoEsfera")
 	var text string
 
-	tweet = domain.NewTweet(*user, text)
+	tweet = domain.NewTweet(user, text)
 
 	// Operation
 	var err error
@@ -76,8 +76,8 @@ func TestTweetsTwoDifferentsWithoutTweets(t *testing.T) {
 	text := "This is my first tweet"
 	secondText := "This is my second tweet"
 
-	tweet = domain.NewTweet(*user, text)
-	secondTweet = domain.NewTweet(*user, secondText)
+	tweet = domain.NewTweet(user, text)
+	secondTweet = domain.NewTweet(user, secondText)
 
 	// Operation
 	service.PublishTweet(tweet)
@@ -114,7 +114,7 @@ func TestCanRetrieveTweetsById(t *testing.T) {
 	var tweet *domain.Tweet
 	var id int
 
-	user := *domain.NewUser("grupoEsfera")
+	user := domain.NewUser("grupoEsfera")
 	text := "This is my first tweet"
 
 	tweet = domain.NewTweet(user, text)
@@ -125,11 +125,11 @@ func TestCanRetrieveTweetsById(t *testing.T) {
 	// Validation
 	publishedTweet := service.GetTweetsById(id)[0]
 
-	isValidTweet(t, publishedTweet, 0, &user, text)
+	isValidTweet(t, publishedTweet, 0, user, text)
 }
 
 func isValidTweet(t *testing.T, tweet *domain.Tweet, id int, user *domain.User, text string) bool {
-	return tweet.User == *user && tweet.Text == text && tweet.Id == id
+	return tweet.User == user && tweet.Text == text && tweet.Id == id
 }
 
 func Test(t *testing.T) {
@@ -142,9 +142,9 @@ func Test(t *testing.T) {
 	text := "This is my first tweet"
 	secondText := "This is my second tweet"
 
-	tweet = domain.NewTweet(*user, text)
-	secondTweet = domain.NewTweet(*user, secondText)
-	thirdTweet = domain.NewTweet(*anotherUser, text)
+	tweet = domain.NewTweet(user, text)
+	secondTweet = domain.NewTweet(user, secondText)
+	thirdTweet = domain.NewTweet(anotherUser, text)
 
 	firstId, _ := service.PublishTweet(tweet)
 	secondId, _ := service.PublishTweet(secondTweet)
