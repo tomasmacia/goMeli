@@ -24,7 +24,7 @@ func main() {
 			c.Print("Write your user: ")
 
 			username := c.ReadLine()
-			user := domain.NewUser(username)
+			user := domain	.NewUser(username)
 
 			c.Print("Write your tweet: ")
 

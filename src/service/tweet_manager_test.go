@@ -8,6 +8,9 @@ import (
 	"github.com/curso/goMeli/src/service"
 )
 
+var userTest *domain.User = domain.NewUser("grupoEsfera", "esfe", "ge@hotmail.com", "123456")
+var tweetTest *domain.Tweet = domain.NewTweet(userTest, "Quiquiriqui")
+
 func TestPublishedTweetIsSaved(t *testing.T) {
 
 	// Initialization
@@ -16,6 +19,8 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 	var user *domain.User
 
 	user = domain.NewUser("grupoEsfera", "asd", "asd", "asd")
+	service.Register(user)
+	service.Log(user)
 	text := "This is my first tweet"
 
 	tweet = domain.NewTweet(user, text)
@@ -45,6 +50,9 @@ func TestTweetWithoutTextisNotPublished(t *testing.T) {
 	var user *domain.User
 
 	user = domain.NewUser("grupoEsfera", "asd", "asd", "asd")
+	service.Register(user)
+	service.Log(user)
+
 	var text string
 
 	tweet = domain.NewTweet(user, text)
@@ -75,6 +83,9 @@ func TestTweetsTwoDifferentsWithoutTweets(t *testing.T) {
 	user = domain.NewUser("grupoEsfera", "asd", "asd", "asd")
 	text := "This is my first tweet"
 	secondText := "This is my second tweet"
+
+	service.Register(user)
+	service.Log(user)
 
 	tweet = domain.NewTweet(user, text)
 	secondTweet = domain.NewTweet(user, secondText)
@@ -117,6 +128,9 @@ func TestCanRetrieveTweetsById(t *testing.T) {
 	user := domain.NewUser("grupoEsfera", "asd", "asd", "asd")
 	text := "This is my first tweet"
 
+	service.Register(user)
+	service.Log(user)
+
 	tweet = domain.NewTweet(user, text)
 
 	// Operation
@@ -132,7 +146,7 @@ func isValidTweet(t *testing.T, tweet *domain.Tweet, id int, user *domain.User, 
 	return tweet.User == user && tweet.Text == text && tweet.Id == id
 }
 
-func Test(t *testing.T) {
+func TestTweetsByUser(t *testing.T) {
 
 	// Initialization
 	service.InitializeService()
@@ -140,6 +154,11 @@ func Test(t *testing.T) {
 
 	user := domain.NewUser("grupoEsfera", "user", "email", "passwd")
 	anotherUser := domain.NewUser("nick", "asd", "asd", "asd")
+
+	service.Register(user)
+	service.Register(anotherUser)
+	service.Log(user)
+	service.Log(anotherUser)
 
 	text := "This is my first tweet"
 	secondText := "This is my second tweet"
@@ -177,11 +196,58 @@ func TestRegisterOneUser(t *testing.T) {
 	// Initialization
 	service.InitializeService()
 
-	user := domain.NewUser("name", "nick", "email", "password")
-	service.Register(user)
+	service.Register(userTest)
+
+	if len(service.GetUsers()) != 1 {
+		t.Error("Registered users number must be 1")
+	}
+}
+
+func TestLoginOneUser(t *testing.T) {
+	service.InitializeService()
+
+	service.Register(userTest)
+	service.Log(userTest)
+
+	if len(service.GetLoggedUsers()) != 1 {
+		t.Error("Logged users number must be 1")
+	}
+
+	service.PublishTweet(tweetTest)
+	tweets := service.GetTweetsByUser(userTest)
+	if len(tweets) != 1 {
+		t.Error("Tweet by logued user wasn't registered correctly")
+	}
+}
+
+func TestLogFail(t *testing.T) {
+	service.InitializeService()
+	err := service.Log(userTest)
+	if err == nil {
+		t.Error("User not registered cannot log in")
+	}
+}
+
+func TestTweetFailed(t *testing.T) {
+	service.InitializeService()
+
+	service.Register(userTest)
 
 	if len(service.GetUsers()) != 1 {
 		t.Error("Registered users number must be 1")
 	}
 
+	if len(service.GetLoggedUsers()) != 0 {
+		t.Error("Logged users number must be 0")
+	}
+
+	_, err := service.PublishTweet(tweetTest)
+	if err == nil {
+		t.Error("Unlogued user was able to tweet")
+	}
+
+	tweets := service.GetTweetsByUser(userTest)
+	if len(tweets) != 0 {
+		t.Error("Tweet by unlogged user was apparently registered")
+	}
 }

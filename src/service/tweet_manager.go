@@ -11,10 +11,13 @@ import (
 var tweets map[*domain.User][]*domain.Tweet
 var nextId int
 var registeredUsers []*domain.User
+var loggedUsers []*domain.User
 
 // InitializeService clears the tweets history
 func InitializeService() {
 	tweets = make(map[*domain.User][]*domain.Tweet)
+	registeredUsers = make([]*domain.User, 0)
+	loggedUsers = make([]*domain.User, 0)
 	nextId = 0
 }
 
@@ -34,6 +37,11 @@ func PublishTweet(tweetToPublish *domain.Tweet) (int, error) {
 	var err error
 	if tweetToPublish.Text == "" {
 		err = fmt.Errorf("text is required")
+		return 0, err
+	}
+	if !isLogged(tweetToPublish.User) {
+		err = fmt.Errorf("user not logged in")
+		return 0, err
 	}
 
 	nowDate := time.Now()
@@ -75,7 +83,42 @@ func Register(user *domain.User) {
 	registeredUsers = append(registeredUsers, user)
 }
 
+// Log Log one user in service
+func Log(user *domain.User) error {
+	if isRegistered(user) {
+		loggedUsers = append(loggedUsers, user)
+		return nil
+	} else {
+		return fmt.Errorf("unregistered user attempted to login")
+	}
+}
+
 // GetUsers Get a list of registered users
 func GetUsers() []*domain.User {
 	return registeredUsers
+}
+
+// GetLoggedUsers Get a list of registered users
+func GetLoggedUsers() []*domain.User {
+	return loggedUsers
+}
+
+func isRegistered(user *domain.User) bool {
+	for _, v := range registeredUsers {
+		if *(user) == *(v) {
+			return true
+			break
+		}
+	}
+	return false
+}
+
+func isLogged(user *domain.User) bool {
+	for _, v := range loggedUsers {
+		if *(user) == *(v) {
+			return true
+			break
+		}
+	}
+	return false
 }
