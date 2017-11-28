@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/curso/goMeli/src/domain"
@@ -122,11 +123,50 @@ func TestCanRetrieveTweetsById(t *testing.T) {
 	id, _ = service.PublishTweet(tweet)
 
 	// Validation
-	publishedTweet := service.GetTweetsById(id)
+	publishedTweet := service.GetTweetsById(id)[0]
 
 	isValidTweet(t, publishedTweet, 0, &user, text)
 }
 
 func isValidTweet(t *testing.T, tweet *domain.Tweet, id int, user *domain.User, text string) bool {
 	return tweet.User == *user && tweet.Text == text && tweet.Id == id
+}
+
+func Test(t *testing.T) {
+	service.InitializeService()
+	var tweet, secondTweet, thirdTweet *domain.Tweet
+
+	user := domain.NewUser("grupoEsfera")
+	anotherUser := domain.NewUser("nick")
+
+	text := "This is my first tweet"
+	secondText := "This is my second tweet"
+
+	tweet = domain.NewTweet(*user, text)
+	secondTweet = domain.NewTweet(*user, secondText)
+	thirdTweet = domain.NewTweet(*anotherUser, text)
+
+	firstId, _ := service.PublishTweet(tweet)
+	secondId, _ := service.PublishTweet(secondTweet)
+	service.PublishTweet(thirdTweet)
+
+	// Operation
+	tweets := service.GetTweetsByUser(user)
+	fmt.Print(*tweets[0])
+
+	// Validation
+	if len(tweets) != 2 {
+		t.Errorf("Expected size is 2 but was %d", len(tweets))
+		return
+	}
+
+	firstPublishedTweet := tweets[0]
+	secondPublishedTweet := tweets[1]
+
+	if !isValidTweet(t, firstPublishedTweet, firstId, user, text) {
+		return
+	}
+	if !isValidTweet(t, secondPublishedTweet, secondId, user, secondText) {
+		return
+	}
 }

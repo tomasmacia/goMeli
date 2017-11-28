@@ -8,18 +8,24 @@ import (
 	"time"
 )
 
-var tweets []*domain.Tweet
+var tweets map[domain.User][]*domain.Tweet
 var nextId int
 
 // InitializeService clears the tweets history
 func InitializeService() {
-	tweets = tweets[:0]
+	tweets = make(map[domain.User][]*domain.Tweet)
 	nextId = 0
 }
 
 // GetTweets returns last tweet
 func GetTweets() []*domain.Tweet {
-	return tweets
+	var list []*domain.Tweet
+	for _, value := range tweets {
+		for _, v := range value {
+			list = append(list, v)
+		}
+	}
+	return list
 }
 
 // PublishTweet publish tweet
@@ -34,16 +40,31 @@ func PublishTweet(tweetToPublish *domain.Tweet) (int, error) {
 	tweetToPublish.Id = nextId
 	nextId++
 
-	tweets = append(tweets, tweetToPublish)
+	value, ok := tweets[tweetToPublish.User]
+	if ok {
+		tweets[tweetToPublish.User] = append(value, tweetToPublish)
+	} else {
+		tweets[tweetToPublish.User] = make([]*domain.Tweet, 0)
+		tweets[tweetToPublish.User] = append(tweets[tweetToPublish.User], tweetToPublish)
+	}
+
 	return tweetToPublish.Id, err
 }
 
-// GetTweetsById dejate de hinchar las bolas compilador
-func GetTweetsById(id int) *domain.Tweet {
-	for _, v := range tweets {
-		if v.Id == id {
-			return v
+// GetTweetsById gets tweets by id
+func GetTweetsById(id int) []*domain.Tweet {
+	var list []*domain.Tweet
+	for _, value := range tweets {
+		for _, v := range value {
+			if v.Id == id {
+				list = append(list, v)
+			}
 		}
 	}
-	return nil
+	return list
+}
+
+// GetTweetsByUser gets tweets by user
+func GetTweetsByUser(user *domain.User) []*domain.Tweet {
+	return tweets[*user]
 }
