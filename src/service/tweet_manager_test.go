@@ -266,3 +266,33 @@ func TestTweetFailed(t *testing.T) {
 		t.Error("Tweet by unlogged user was apparently registered")
 	}
 }
+
+func TestLogoutOneUser(t *testing.T) {
+	var manager service.TweetManager
+	manager.InitializeService()
+
+	manager.Register(userTest)
+	manager.Log(userTest)
+
+	if len(manager.GetLoggedUsers()) != 1 {
+		t.Error("Logged users number must be 1 before logging out")
+		return
+	}
+
+	manager.Logout(userTest)
+
+	if len(manager.GetLoggedUsers()) != 0 {
+		t.Error("Logged users number must be 0 after logging out")
+	}
+}
+
+func TestLogoutOneUnloggedUser(t *testing.T) {
+	var manager service.TweetManager
+	manager.InitializeService()
+
+	manager.Register(userTest)
+
+	if manager.Logout(userTest) == nil {
+		t.Error("User is not logged before logging in")
+	}
+}

@@ -102,6 +102,25 @@ func (tm *TweetManager) Log(user *domain.User) error {
 	}
 }
 
+// Logout Logout one user in service
+func (tm *TweetManager) Logout(user *domain.User) error {
+	if tm.isLogged(user) {
+		tm.loggedUsers = deleteFromUserList(tm.loggedUsers, user)
+		return nil
+	}
+	return fmt.Errorf("User is not logged in")
+}
+
+func deleteFromUserList(list []*domain.User, user *domain.User) []*domain.User {
+	newList := make([]*domain.User, 0)
+	for _, v := range list {
+		if user != v {
+			newList = append(newList, v)
+		}
+	}
+	return newList
+}
+
 // GetUsers Get a list of registered users
 func (tm *TweetManager) GetUsers() []*domain.User {
 	return tm.registeredUsers
