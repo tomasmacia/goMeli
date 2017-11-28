@@ -15,7 +15,7 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 	var tweet *domain.Tweet
 	var user *domain.User
 
-	user = domain.NewUser("grupoEsfera")
+	user = domain.NewUser("grupoEsfera", "asd", "asd", "asd")
 	text := "This is my first tweet"
 
 	tweet = domain.NewTweet(user, text)
@@ -44,7 +44,7 @@ func TestTweetWithoutTextisNotPublished(t *testing.T) {
 	var tweet *domain.Tweet
 	var user *domain.User
 
-	user = domain.NewUser("grupoEsfera")
+	user = domain.NewUser("grupoEsfera", "asd", "asd", "asd")
 	var text string
 
 	tweet = domain.NewTweet(user, text)
@@ -72,7 +72,7 @@ func TestTweetsTwoDifferentsWithoutTweets(t *testing.T) {
 	var tweet, secondTweet *domain.Tweet
 	var user *domain.User
 
-	user = domain.NewUser("grupoEsfera")
+	user = domain.NewUser("grupoEsfera", "asd", "asd", "asd")
 	text := "This is my first tweet"
 	secondText := "This is my second tweet"
 
@@ -114,7 +114,7 @@ func TestCanRetrieveTweetsById(t *testing.T) {
 	var tweet *domain.Tweet
 	var id int
 
-	user := domain.NewUser("grupoEsfera")
+	user := domain.NewUser("grupoEsfera", "asd", "asd", "asd")
 	text := "This is my first tweet"
 
 	tweet = domain.NewTweet(user, text)
@@ -133,11 +133,13 @@ func isValidTweet(t *testing.T, tweet *domain.Tweet, id int, user *domain.User, 
 }
 
 func Test(t *testing.T) {
+
+	// Initialization
 	service.InitializeService()
 	var tweet, secondTweet, thirdTweet *domain.Tweet
 
-	user := domain.NewUser("grupoEsfera")
-	anotherUser := domain.NewUser("nick")
+	user := domain.NewUser("grupoEsfera", "user", "email", "passwd")
+	anotherUser := domain.NewUser("nick", "asd", "asd", "asd")
 
 	text := "This is my first tweet"
 	secondText := "This is my second tweet"
@@ -169,4 +171,17 @@ func Test(t *testing.T) {
 	if !isValidTweet(t, secondPublishedTweet, secondId, user, secondText) {
 		return
 	}
+}
+
+func TestRegisterOneUser(t *testing.T) {
+	// Initialization
+	service.InitializeService()
+
+	user := domain.NewUser("name", "nick", "email", "password")
+	service.Register(user)
+
+	if len(service.GetUsers()) != 1 {
+		t.Error("Registered users number must be 1")
+	}
+
 }

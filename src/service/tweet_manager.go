@@ -10,6 +10,7 @@ import (
 
 var tweets map[*domain.User][]*domain.Tweet
 var nextId int
+var registeredUsers []*domain.User
 
 // InitializeService clears the tweets history
 func InitializeService() {
@@ -67,4 +68,14 @@ func GetTweetsById(id int) []*domain.Tweet {
 // GetTweetsByUser gets tweets by user
 func GetTweetsByUser(user *domain.User) []*domain.Tweet {
 	return tweets[user]
+}
+
+// Register Register one user in service
+func Register(user *domain.User) {
+	registeredUsers = append(registeredUsers, user)
+}
+
+// GetUsers Get a list of registered users
+func GetUsers() []*domain.User {
+	return registeredUsers
 }

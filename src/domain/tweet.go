@@ -12,7 +12,10 @@ type Tweet struct {
 
 // User Type User with its name
 type User struct {
-	Name string
+	Name     string
+	Nick     string
+	Email    string
+	Password string
 }
 
 // NewTweet creates and returns a tweet
@@ -21,6 +24,6 @@ func NewTweet(user *User, text string) *Tweet {
 }
 
 // NewUser creates and returns a user
-func NewUser(user string) *User {
-	return &User{user}
+func NewUser(username string, nick string, email string, password string) *User {
+	return &User{username, nick, email, password}
 }
