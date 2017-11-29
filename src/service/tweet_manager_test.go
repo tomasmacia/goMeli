@@ -296,3 +296,24 @@ func TestLogoutOneUnloggedUser(t *testing.T) {
 		t.Error("User is not logged before logging in")
 	}
 }
+
+func TestRemoveOnePublishedTweet(t *testing.T) {
+	// Initialization
+	var manager service.TweetManager
+	manager.InitializeService()
+
+	manager.Register(userTest)
+	manager.Log(userTest)
+
+	// Operation
+	manager.PublishTweet(tweetTest)
+	manager.DeleteTweet(tweetTest)
+
+	// Validation
+	publishedTweets := manager.GetTweets()
+
+	if len(publishedTweets) != 0 {
+		t.Errorf("Expected tweets should be 0 after removing but is %d", len(publishedTweets))
+	}
+
+}

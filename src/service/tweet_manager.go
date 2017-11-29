@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// TweetManager Service that manage and publish your tweets
 type TweetManager struct {
 	tweets          map[*domain.User][]*domain.Tweet
 	nextId          int
@@ -97,9 +98,8 @@ func (tm *TweetManager) Log(user *domain.User) error {
 	if tm.isRegistered(user) {
 		tm.loggedUsers = append(tm.loggedUsers, user)
 		return nil
-	} else {
-		return fmt.Errorf("unregistered user attempted to login")
 	}
+	return fmt.Errorf("unregistered user attempted to login")
 }
 
 // Logout Logout one user in service
@@ -135,7 +135,6 @@ func (tm *TweetManager) isRegistered(user *domain.User) bool {
 	for _, v := range tm.registeredUsers {
 		if *(user) == *(v) {
 			return true
-			break
 		}
 	}
 	return false
@@ -145,8 +144,36 @@ func (tm *TweetManager) isLogged(user *domain.User) bool {
 	for _, v := range tm.loggedUsers {
 		if *(user) == *(v) {
 			return true
-			break
 		}
 	}
 	return false
+}
+
+// DeleteTweet Deletes one tweet from every user timeline
+func (tm *TweetManager) DeleteTweet(tweetToDelete *domain.Tweet) error {
+	// Delete tweet from EVERY timeline, not just from user. TO BE CHECKED
+	count := 0
+	for user, tweetList := range tm.tweets {
+		for _, tweet := range tweetList {
+			if tweet.Id == tweetToDelete.Id {
+				tm.tweets[user] = deleteFromTweetList(tweetList, tweetToDelete)
+				count++
+
+			}
+		}
+	}
+	if count == 0 {
+		return fmt.Errorf("Tweet does not exist")
+	}
+	return nil
+}
+
+func deleteFromTweetList(tweetList []*domain.Tweet, tweet *domain.Tweet) []*domain.Tweet {
+	newList := make([]*domain.Tweet, 0)
+	for _, v := range tweetList {
+		if tweet.Id != v.Id {
+			newList = append(newList, v)
+		}
+	}
+	return newList
 }
