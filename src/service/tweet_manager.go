@@ -199,3 +199,20 @@ func (tm *TweetManager) GetFollowed(user *domain.User) []*domain.User {
 func (tm *TweetManager) Unfollow(userFollowing *domain.User, userFollowed *domain.User) {
 	userFollowing.Unfollow(userFollowed)
 }
+
+// EditTweet Edits a tweet with the given text
+func (tm *TweetManager) EditTweet(tweetToEdit *domain.Tweet, newText string) error {
+	count := 0
+	for _, tweetList := range tm.tweets {
+		for _, tweet := range tweetList {
+			if tweet.Id == tweetToEdit.Id {
+				tweet.Text = newText
+				count++
+			}
+		}
+	}
+	if count == 0 {
+		return fmt.Errorf("Tweet does not exist")
+	}
+	return nil
+}

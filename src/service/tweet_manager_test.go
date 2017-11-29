@@ -415,3 +415,16 @@ func TestOneUserUnfollowsAFollowedUser(t *testing.T) {
 		t.Errorf("Expected users followed by %v was 0 but is %d", userTest2.Name, len(manager.GetFollowed(userTest2)))
 	}
 }
+func TestEditTweet(t *testing.T) {
+	var manager service.TweetManager
+	manager.InitializeService()
+	manager.Register(userTest)
+	manager.Log(userTest)
+	manager.PublishTweet(tweetTest)
+	manager.EditTweet(tweetTest, "Changed")
+	changedTweet := manager.GetTweets()[0]
+
+	if changedTweet.Text != "Changed" {
+		t.Errorf("Tweet's text wasn't changed, should be Changed, is %v", changedTweet.Text)
+	}
+}
