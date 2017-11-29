@@ -333,8 +333,8 @@ func TestOneUserCanFollowAnotherOne(t *testing.T) {
 
 	manager.Follow(userTest, userFollowed)
 
-	if len(manager.GetFollowers(userTest)) != 1 {
-		t.Errorf("Expected followers should be 1 but is %d", len(manager.GetFollowers(userTest)))
+	if len(manager.GetFollowed(userTest)) != 1 {
+		t.Errorf("Expected followers should be 1 but is %d", len(manager.GetFollowed(userTest)))
 	}
 }
 
@@ -361,11 +361,11 @@ func TestOneUserUnregisteredCantFollowRegisteredUsers(t *testing.T) {
 	var manager service.TweetManager
 	manager.InitializeService()
 
-	userFollowing := domain.NewUser("bot", "bot", "bot", "bot")
+	userFollowed := domain.NewUser("bot", "bot", "bot", "bot")
 
-	manager.Register(userFollowing)
+	manager.Register(userFollowed)
 
-	err := manager.Follow(userTest, userFollowing)
+	err := manager.Follow(userTest, userFollowed)
 
 	if err == nil {
 		t.Errorf("Unregistered users cant follow users")
@@ -377,13 +377,41 @@ func TestOneUnloggedUserCantFollowUsers(t *testing.T) {
 	var manager service.TweetManager
 	manager.InitializeService()
 
-	userFollowing := domain.NewUser("bot", "bot", "bot", "bot")
+	userFollowed := domain.NewUser("bot", "bot", "bot", "bot")
 
 	manager.Register(userTest)
 
-	err := manager.Follow(userTest, userFollowing)
+	err := manager.Follow(userTest, userFollowed)
 
 	if err == nil {
 		t.Errorf("Unlogged users cant follow")
+	}
+}
+
+func TestOneUserUnfollowsAFollowedUser(t *testing.T) {
+	// Initialization
+	var manager service.TweetManager
+	manager.InitializeService()
+	//
+	userTest2 := domain.NewUser("sad", "asd", "asd", "asdasd")
+	//
+
+	userFollowed := domain.NewUser("bot", "bot", "bot", "bot")
+
+	manager.Register(userTest2)
+	manager.Register(userFollowed)
+	manager.Log(userTest2)
+
+	// Operation
+	manager.Follow(userTest2, userFollowed)
+
+	if len(manager.GetFollowed(userTest2)) != 1 {
+		t.Errorf("Followers number should be 1 but is %d", len(manager.GetFollowed(userTest2)))
+	}
+
+	manager.Unfollow(userTest2, userFollowed)
+
+	if len(manager.GetFollowed(userTest2)) != 0 {
+		t.Errorf("Expected users followed by %v was 0 but is %d", userTest2.Name, len(manager.GetFollowed(userTest2)))
 	}
 }

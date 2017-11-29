@@ -179,18 +179,23 @@ func deleteFromTweetList(tweetList []*domain.Tweet, tweet *domain.Tweet) []*doma
 }
 
 // Follow Follow another registered user in the service
-func (tm *TweetManager) Follow(userFollowed *domain.User, userFollowing *domain.User) error {
-	if !tm.isRegistered(userFollowed) || !tm.isRegistered(userFollowing) {
+func (tm *TweetManager) Follow(userFollowing *domain.User, userFollowed *domain.User) error {
+	if !tm.isRegistered(userFollowing) || !tm.isRegistered(userFollowed) {
 		return fmt.Errorf("Users must be registered")
 	}
-	if !tm.isLogged(userFollowed) {
+	if !tm.isLogged(userFollowing) {
 		return fmt.Errorf("Unlogged users cant follow")
 	}
-	userFollowed.Follow(userFollowing)
+	userFollowing.Follow(userFollowed)
 	return nil
 }
 
-// GetFollowers Get a List of users following
-func (tm *TweetManager) GetFollowers(user *domain.User) []*domain.User {
+// GetFollowers Get a List of users followed by user
+func (tm *TweetManager) GetFollowed(user *domain.User) []*domain.User {
 	return user.Following
+}
+
+// Unfollow Unfollow one user you followed before in the service
+func (tm *TweetManager) Unfollow(userFollowing *domain.User, userFollowed *domain.User) {
+	userFollowing.Unfollow(userFollowed)
 }
