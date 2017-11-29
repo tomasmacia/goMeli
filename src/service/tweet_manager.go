@@ -133,7 +133,7 @@ func (tm *TweetManager) GetLoggedUsers() []*domain.User {
 
 func (tm *TweetManager) isRegistered(user *domain.User) bool {
 	for _, v := range tm.registeredUsers {
-		if *(user) == *(v) {
+		if user == v {
 			return true
 		}
 	}
@@ -142,7 +142,7 @@ func (tm *TweetManager) isRegistered(user *domain.User) bool {
 
 func (tm *TweetManager) isLogged(user *domain.User) bool {
 	for _, v := range tm.loggedUsers {
-		if *(user) == *(v) {
+		if user == v {
 			return true
 		}
 	}
@@ -176,4 +176,21 @@ func deleteFromTweetList(tweetList []*domain.Tweet, tweet *domain.Tweet) []*doma
 		}
 	}
 	return newList
+}
+
+// Follow Follow another registered user in the service
+func (tm *TweetManager) Follow(userFollowed *domain.User, userFollowing *domain.User) error {
+	if !tm.isRegistered(userFollowed) || !tm.isRegistered(userFollowing) {
+		return fmt.Errorf("Users must be registered")
+	}
+	if !tm.isLogged(userFollowed) {
+		return fmt.Errorf("Unlogged users cant follow")
+	}
+	userFollowed.Follow(userFollowing)
+	return nil
+}
+
+// GetFollowers Get a List of users following
+func (tm *TweetManager) GetFollowers(user *domain.User) []*domain.User {
+	return user.Following
 }

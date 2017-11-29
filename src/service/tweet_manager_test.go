@@ -317,3 +317,73 @@ func TestRemoveOnePublishedTweet(t *testing.T) {
 	}
 
 }
+
+func TestOneUserCanFollowAnotherOne(t *testing.T) {
+	// Initialization
+	var manager service.TweetManager
+	manager.InitializeService()
+
+	userFollowing := domain.NewUser("bot", "bot", "bot", "bot")
+
+	manager.Register(userTest)
+	manager.Register(userFollowing)
+
+	manager.Log(userTest)
+	manager.Log(userFollowing)
+
+	manager.Follow(userTest, userFollowing)
+
+	if len(manager.GetFollowers(userTest)) != 1 {
+		t.Errorf("Expected followers should be 1 but is %d", len(manager.GetFollowers(userTest)))
+	}
+}
+
+func TestOneUserCantFollowUnregisteredUsers(t *testing.T) {
+	// Initialization
+	var manager service.TweetManager
+	manager.InitializeService()
+
+	userFollowing := domain.NewUser("bot", "bot", "bot", "bot")
+
+	manager.Register(userTest)
+
+	manager.Log(userTest)
+
+	err := manager.Follow(userTest, userFollowing)
+
+	if err == nil {
+		t.Errorf("Unregistered users cant be followed")
+	}
+}
+
+func TestOneUserUnregisteredCantFollowRegisteredUsers(t *testing.T) {
+	// Initialization
+	var manager service.TweetManager
+	manager.InitializeService()
+
+	userFollowing := domain.NewUser("bot", "bot", "bot", "bot")
+
+	manager.Register(userFollowing)
+
+	err := manager.Follow(userTest, userFollowing)
+
+	if err == nil {
+		t.Errorf("Unregistered users cant follow users")
+	}
+}
+
+func TestOneUnloggedUserCantFollowUsers(t *testing.T) {
+	// Initialization
+	var manager service.TweetManager
+	manager.InitializeService()
+
+	userFollowing := domain.NewUser("bot", "bot", "bot", "bot")
+
+	manager.Register(userTest)
+
+	err := manager.Follow(userTest, userFollowing)
+
+	if err == nil {
+		t.Errorf("Unlogged users cant follow")
+	}
+}
