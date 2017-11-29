@@ -323,15 +323,15 @@ func TestOneUserCanFollowAnotherOne(t *testing.T) {
 	var manager service.TweetManager
 	manager.InitializeService()
 
-	userFollowing := domain.NewUser("bot", "bot", "bot", "bot")
+	userFollowed := domain.NewUser("bot", "bot", "bot", "bot")
 
 	manager.Register(userTest)
-	manager.Register(userFollowing)
+	manager.Register(userFollowed)
 
 	manager.Log(userTest)
-	manager.Log(userFollowing)
+	manager.Log(userFollowed)
 
-	manager.Follow(userTest, userFollowing)
+	manager.Follow(userTest, userFollowed)
 
 	if len(manager.GetFollowers(userTest)) != 1 {
 		t.Errorf("Expected followers should be 1 but is %d", len(manager.GetFollowers(userTest)))
@@ -343,13 +343,13 @@ func TestOneUserCantFollowUnregisteredUsers(t *testing.T) {
 	var manager service.TweetManager
 	manager.InitializeService()
 
-	userFollowing := domain.NewUser("bot", "bot", "bot", "bot")
+	userFollowed := domain.NewUser("bot", "bot", "bot", "bot")
 
 	manager.Register(userTest)
 
 	manager.Log(userTest)
 
-	err := manager.Follow(userTest, userFollowing)
+	err := manager.Follow(userTest, userFollowed)
 
 	if err == nil {
 		t.Errorf("Unregistered users cant be followed")
