@@ -428,3 +428,16 @@ func TestEditTweet(t *testing.T) {
 		t.Errorf("Tweet's text wasn't changed, should be Changed, is %v", changedTweet.Text)
 	}
 }
+
+func TestReferences(t *testing.T) {
+	var manager service.TweetManager
+	manager.InitializeService()
+	manager.Register(userTest)
+	manager.Log(userTest)
+	manager.PublishTweet(tweetTest)
+	manager.EditTweet(tweetTest, "Changed")
+
+	if tweetTest.Text == "Changed" {
+		t.Errorf("Original tweet from tweet_manager_test changed when it shouldn't have")
+	}
+}
