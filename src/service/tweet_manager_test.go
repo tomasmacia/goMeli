@@ -492,11 +492,10 @@ func TestQuoteTweetPrintsUserTextAndQuotedTweet(t *testing.T) {
 
 }
 
-/*
 func TestCanGetAStringFromATweet(t *testing.T) {
 
 	// Initialization
-	tweet := domain.NewTextTweet("grupoesfera", "This is my tweet")
+	tweet := domain.NewTextTweet(userTest, "This is my tweet")
 
 	// Operation
 	text := tweet.String()
@@ -508,4 +507,3 @@ func TestCanGetAStringFromATweet(t *testing.T) {
 	}
 
 }
-*/

@@ -24,9 +24,10 @@ type QuoteTweet struct {
 	QuotedTweet *TextTweet
 }
 
-// Printable interface prints tweet
-type Printable interface {
+// Tweeter interface prints tweet
+type Tweeter interface {
 	PrintableTweet() string
+	String() string
 }
 
 // NewTweet  NewTweet creates and returns a tweet
@@ -70,4 +71,19 @@ func (qt *QuoteTweet) PrintableTweet() string {
 	text := qt.Text
 	quotedTweet := qt.QuotedTweet.PrintableTweet()
 	return user + ": " + text + " " + "\"" + quotedTweet + "\""
+}
+
+// PrintableTweet Prints text from TextTweet
+func (tt *TextTweet) String() string {
+	return tt.PrintableTweet()
+}
+
+// PrintableTweet Prints text from tweet
+func (it *ImageTweet) String() string {
+	return it.PrintableTweet()
+}
+
+// PrintableTweet Prints text from tweet
+func (qt *QuoteTweet) String() string {
+	return qt.PrintableTweet()
 }
