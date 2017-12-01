@@ -4,23 +4,24 @@ import (
 	"time"
 )
 
-// Tweet Type Tweet which contains user and text of tweet
-type Tweet struct {
+// TextTweet Type Tweet which contains user and text of tweet
+type TextTweet struct {
 	Id   int
 	User *User
 	Text string
 	Date *time.Time
 }
 
-// TextTweet Tweet with just text
-type TextTweet struct {
-	Tweet
-}
-
 // ImageTweet Tweets that contain an image
 type ImageTweet struct {
-	Tweet
+	TextTweet
 	Image string
+}
+
+// QuoteTweet Tweets that contain another Tweet
+type QuoteTweet struct {
+	TextTweet
+	QuotedTweet *TextTweet
 }
 
 // Printable interface prints tweet
@@ -29,18 +30,23 @@ type Printable interface {
 }
 
 // NewTweet  NewTweet creates and returns a tweet
-func NewTweet(user *User, text string) *Tweet {
-	return &Tweet{0, user, text, nil}
+func NewTweet(user *User, text string) *TextTweet {
+	return NewTextTweet(user, text)
 }
 
 // NewTextTweet NewTextTweet creates and returns a text tweet
 func NewTextTweet(user *User, text string) *TextTweet {
-	return &TextTweet{Tweet{0, user, text, nil}}
+	return &TextTweet{0, user, text, nil}
 }
 
 // NewImageTweet NewImageTweet creates and returns a new image tweet
 func NewImageTweet(user *User, text string, image string) *ImageTweet {
-	return &ImageTweet{Tweet{0, user, text, nil}, image}
+	return &ImageTweet{TextTweet{0, user, text, nil}, image}
+}
+
+// NewQuoteTweet NewQuoteTweet creates and returns a new  tweet
+func NewQuoteTweet(user *User, text string, tweet *TextTweet) *QuoteTweet {
+	return &QuoteTweet{TextTweet{0, user, text, nil}, tweet}
 }
 
 // PrintableTweet Prints text from TextTweet
@@ -56,4 +62,12 @@ func (it *ImageTweet) PrintableTweet() string {
 	text := it.Text
 	image := it.Image
 	return user + ": " + text + " " + image
+}
+
+// PrintableTweet Prints text from tweet
+func (qt *QuoteTweet) PrintableTweet() string {
+	user := ("@" + qt.User.Nick)
+	text := qt.Text
+	quotedTweet := qt.QuotedTweet.PrintableTweet()
+	return user + ": " + text + " " + "\"" + quotedTweet + "\""
 }

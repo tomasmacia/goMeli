@@ -9,7 +9,7 @@ import (
 )
 
 var userTest *domain.User = domain.NewUser("grupoEsfera", "grupoesfera", "ge@hotmail.com", "123456")
-var tweetTest *domain.Tweet = domain.NewTweet(userTest, "Quiquiriqui")
+var tweetTest *domain.TextTweet = domain.NewTweet(userTest, "Quiquiriqui")
 
 func TestPublishedTweetIsSaved(t *testing.T) {
 
@@ -24,7 +24,7 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 
 	text := "This is my first tweet"
 
-	var tweet *domain.Tweet
+	var tweet *domain.TextTweet
 	tweet = domain.NewTweet(user, text)
 
 	// Operation
@@ -53,7 +53,7 @@ func TestTweetWithoutTextisNotPublished(t *testing.T) {
 	var manager service.TweetManager
 	manager.InitializeService()
 
-	var tweet *domain.Tweet
+	var tweet *domain.TextTweet
 	var user *domain.User
 
 	user = domain.NewUser("grupoEsfera", "asd", "asd", "asd")
@@ -85,7 +85,7 @@ func TestTweetsTwoDifferentsWithoutTweets(t *testing.T) {
 	var manager service.TweetManager
 	manager.InitializeService()
 
-	var tweet, secondTweet *domain.Tweet
+	var tweet, secondTweet *domain.TextTweet
 	var user *domain.User
 
 	user = domain.NewUser("grupoEsfera", "asd", "asd", "asd")
@@ -131,7 +131,7 @@ func TestCanRetrieveTweetsById(t *testing.T) {
 	var manager service.TweetManager
 	manager.InitializeService()
 
-	var tweet *domain.Tweet
+	var tweet *domain.TextTweet
 	var id int
 
 	user := domain.NewUser("grupoEsfera", "asd", "asd", "asd")
@@ -151,7 +151,7 @@ func TestCanRetrieveTweetsById(t *testing.T) {
 	isValidTweet(t, publishedTweet, 0, user, text)
 }
 
-func isValidTweet(t *testing.T, tweet *domain.Tweet, id int, user *domain.User, text string) bool {
+func isValidTweet(t *testing.T, tweet *domain.TextTweet, id int, user *domain.User, text string) bool {
 	return tweet.User == user && tweet.Text == text && tweet.Id == id
 }
 
@@ -160,7 +160,7 @@ func TestTweetsByUser(t *testing.T) {
 	// Initialization
 	var manager service.TweetManager
 	manager.InitializeService()
-	var tweet, secondTweet, thirdTweet *domain.Tweet
+	var tweet, secondTweet, thirdTweet *domain.TextTweet
 
 	user := domain.NewUser("grupoEsfera", "user", "email", "passwd")
 	anotherUser := domain.NewUser("nick", "asd", "asd", "asd")
@@ -474,12 +474,12 @@ func TestImageTweetPrintsUserTextAndImageURL(t *testing.T) {
 
 }
 
-/*
 func TestQuoteTweetPrintsUserTextAndQuotedTweet(t *testing.T) {
 
 	// Initialization
-	quotedTweet := domain.NewTextTweet("grupoesfera", "This is my tweet")
-	tweet := domain.NewQuoteTweet("nick", "Awesome", quotedTweet)
+	quotedTweet := domain.NewTextTweet(userTest, "This is my tweet")
+	userNick := domain.NewUser("nick riviera", "nick", "nick", "nick")
+	tweet := domain.NewQuoteTweet(userNick, "Awesome", quotedTweet)
 
 	// Operation
 	text := tweet.PrintableTweet()
@@ -492,6 +492,7 @@ func TestQuoteTweetPrintsUserTextAndQuotedTweet(t *testing.T) {
 
 }
 
+/*
 func TestCanGetAStringFromATweet(t *testing.T) {
 
 	// Initialization

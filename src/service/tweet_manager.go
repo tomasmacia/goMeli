@@ -10,7 +10,7 @@ import (
 
 // TweetManager Service that manage and publish your tweets
 type TweetManager struct {
-	tweets          map[*domain.User][]*domain.Tweet
+	tweets          map[*domain.User][]*domain.TextTweet
 	nextId          int
 	registeredUsers []*domain.User
 	loggedUsers     []*domain.User
@@ -25,15 +25,15 @@ var loggedUsers []*domain.User
 
 // InitializeService clears the tweets history
 func (tm *TweetManager) InitializeService() {
-	tm.tweets = make(map[*domain.User][]*domain.Tweet)
+	tm.tweets = make(map[*domain.User][]*domain.TextTweet)
 	tm.registeredUsers = make([]*domain.User, 0)
 	tm.loggedUsers = make([]*domain.User, 0)
 	tm.nextId = 0
 }
 
 // GetTweets returns last tweet
-func (tm *TweetManager) GetTweets() []*domain.Tweet {
-	var list []*domain.Tweet
+func (tm *TweetManager) GetTweets() []*domain.TextTweet {
+	var list []*domain.TextTweet
 	for _, value := range tm.tweets {
 		for _, v := range value {
 			list = append(list, v)
@@ -43,7 +43,7 @@ func (tm *TweetManager) GetTweets() []*domain.Tweet {
 }
 
 // PublishTweet publish tweet
-func (tm *TweetManager) PublishTweet(tweetToPublish *domain.Tweet) (int, error) {
+func (tm *TweetManager) PublishTweet(tweetToPublish *domain.TextTweet) (int, error) {
 	var err error
 	if tweetToPublish.Text == "" {
 		err = fmt.Errorf("text is required")
@@ -55,7 +55,7 @@ func (tm *TweetManager) PublishTweet(tweetToPublish *domain.Tweet) (int, error) 
 	}
 
 	//var tweetCopy *domain.Tweet
-	tweetCopy := new(domain.Tweet)
+	tweetCopy := new(domain.TextTweet)
 	*tweetCopy = *tweetToPublish
 
 	nowDate := time.Now()
@@ -67,7 +67,7 @@ func (tm *TweetManager) PublishTweet(tweetToPublish *domain.Tweet) (int, error) 
 	if ok {
 		tm.tweets[tweetCopy.User] = append(value, tweetCopy)
 	} else {
-		tm.tweets[tweetCopy.User] = make([]*domain.Tweet, 0)
+		tm.tweets[tweetCopy.User] = make([]*domain.TextTweet, 0)
 		tm.tweets[tweetCopy.User] = append(tm.tweets[tweetCopy.User], tweetCopy)
 	}
 
@@ -75,8 +75,8 @@ func (tm *TweetManager) PublishTweet(tweetToPublish *domain.Tweet) (int, error) 
 }
 
 // GetTweetsById gets tweets by id
-func (tm *TweetManager) GetTweetsById(id int) []*domain.Tweet {
-	var list []*domain.Tweet
+func (tm *TweetManager) GetTweetsById(id int) []*domain.TextTweet {
+	var list []*domain.TextTweet
 	for _, value := range tm.tweets {
 		for _, v := range value {
 			if v.Id == id {
@@ -88,7 +88,7 @@ func (tm *TweetManager) GetTweetsById(id int) []*domain.Tweet {
 }
 
 // GetTweetsByUser gets tweets by user
-func (tm *TweetManager) GetTweetsByUser(user *domain.User) []*domain.Tweet {
+func (tm *TweetManager) GetTweetsByUser(user *domain.User) []*domain.TextTweet {
 	return tm.tweets[user]
 }
 
@@ -154,7 +154,7 @@ func (tm *TweetManager) isLogged(user *domain.User) bool {
 }
 
 // DeleteTweet Deletes one tweet from every user timeline
-func (tm *TweetManager) DeleteTweet(tweetToDelete *domain.Tweet) error {
+func (tm *TweetManager) DeleteTweet(tweetToDelete *domain.TextTweet) error {
 	// Delete tweet from EVERY timeline, not just from user. TO BE CHECKED
 	count := 0
 	for user, tweetList := range tm.tweets {
@@ -172,8 +172,8 @@ func (tm *TweetManager) DeleteTweet(tweetToDelete *domain.Tweet) error {
 	return nil
 }
 
-func deleteFromTweetList(tweetList []*domain.Tweet, tweet *domain.Tweet) []*domain.Tweet {
-	newList := make([]*domain.Tweet, 0)
+func deleteFromTweetList(tweetList []*domain.TextTweet, tweet *domain.TextTweet) []*domain.TextTweet {
+	newList := make([]*domain.TextTweet, 0)
 	for _, v := range tweetList {
 		if tweet.Id != v.Id {
 			newList = append(newList, v)
@@ -194,7 +194,7 @@ func (tm *TweetManager) Follow(userFollowing *domain.User, userFollowed *domain.
 	return nil
 }
 
-// GetFollowers Get a List of users followed by user
+// GetFollowed Get a List of users followed by user
 func (tm *TweetManager) GetFollowed(user *domain.User) []*domain.User {
 	return user.Following
 }
@@ -205,7 +205,7 @@ func (tm *TweetManager) Unfollow(userFollowing *domain.User, userFollowed *domai
 }
 
 // EditTweet Edits a tweet with the given text
-func (tm *TweetManager) EditTweet(tweetToEdit *domain.Tweet, newText string) error {
+func (tm *TweetManager) EditTweet(tweetToEdit *domain.TextTweet, newText string) error {
 	count := 0
 	for _, tweetList := range tm.tweets {
 		for _, tweet := range tweetList {
