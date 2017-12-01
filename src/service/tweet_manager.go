@@ -54,20 +54,24 @@ func (tm *TweetManager) PublishTweet(tweetToPublish *domain.Tweet) (int, error) 
 		return 0, err
 	}
 
+	//var tweetCopy *domain.Tweet
+	tweetCopy := new(domain.Tweet)
+	*tweetCopy = *tweetToPublish
+
 	nowDate := time.Now()
-	tweetToPublish.Date = &nowDate
-	tweetToPublish.Id = tm.nextId
+	tweetCopy.Date = &nowDate
+	tweetCopy.Id = tm.nextId
 	tm.nextId++
 
-	value, ok := tm.tweets[tweetToPublish.User]
+	value, ok := tm.tweets[tweetCopy.User]
 	if ok {
-		tm.tweets[tweetToPublish.User] = append(value, tweetToPublish)
+		tm.tweets[tweetCopy.User] = append(value, tweetCopy)
 	} else {
-		tm.tweets[tweetToPublish.User] = make([]*domain.Tweet, 0)
-		tm.tweets[tweetToPublish.User] = append(tm.tweets[tweetToPublish.User], tweetToPublish)
+		tm.tweets[tweetCopy.User] = make([]*domain.Tweet, 0)
+		tm.tweets[tweetCopy.User] = append(tm.tweets[tweetCopy.User], tweetCopy)
 	}
 
-	return tweetToPublish.Id, err
+	return tweetCopy.Id, err
 }
 
 // GetTweetsById gets tweets by id
