@@ -20,6 +20,7 @@ type TextTweet struct {
 // ImageTweet Tweets that contain an image
 type ImageTweet struct {
 	Tweet
+	Image string
 }
 
 // Printable interface prints tweet
@@ -37,9 +38,22 @@ func NewTextTweet(user *User, text string) *TextTweet {
 	return &TextTweet{Tweet{0, user, text, nil}}
 }
 
-// PrintableTweet Prints text from tweet
+// NewImageTweet NewImageTweet creates and returns a new image tweet
+func NewImageTweet(user *User, text string, image string) *ImageTweet {
+	return &ImageTweet{Tweet{0, user, text, nil}, image}
+}
+
+// PrintableTweet Prints text from TextTweet
 func (tt *TextTweet) PrintableTweet() string {
 	user := ("@" + tt.User.Nick)
 	text := tt.Text
 	return user + ": " + text
+}
+
+// PrintableTweet Prints text from tweet
+func (it *ImageTweet) PrintableTweet() string {
+	user := ("@" + it.User.Nick)
+	text := it.Text
+	image := it.Image
+	return user + ": " + text + " " + image
 }

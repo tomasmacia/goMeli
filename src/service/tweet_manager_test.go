@@ -458,11 +458,10 @@ func TestTextTweetPrintsUserAndText(t *testing.T) {
 
 }
 
-/*
 func TestImageTweetPrintsUserTextAndImageURL(t *testing.T) {
 
 	// Initialization
-	tweet := domain.NewImageTweet("grupoesfera", "This is my image", "http://www.grupoesfera.com.ar/common/img/grupoesfera.png")
+	tweet := domain.NewImageTweet(userTest, "This is my image", "http://www.grupoesfera.com.ar/common/img/grupoesfera.png")
 
 	// Operation
 	text := tweet.PrintableTweet()
@@ -475,6 +474,7 @@ func TestImageTweetPrintsUserTextAndImageURL(t *testing.T) {
 
 }
 
+/*
 func TestQuoteTweetPrintsUserTextAndQuotedTweet(t *testing.T) {
 
 	// Initialization
