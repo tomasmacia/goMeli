@@ -242,15 +242,25 @@ func (tm *TweetManager) GetTimeline(user *domain.User) []*domain.TextTweet {
 func (tm *TweetManager) Retweet(user *domain.User, tweet *domain.TextTweet) error {
 
 	tweetList := tm.GetTweetsById(tweet.Id)
-	//fmt.Print(len(tweetList))
 
 	if len(tweetList) == 0 {
 		return fmt.Errorf("Tweet does not exist or is not published")
 	}
 
-	//fmt.Print("hola")
-
 	tm.tweets[user] = append(tm.tweets[user], tweet)
 	return nil
 
+}
+
+// AddFavourite Adds a tweet to users favs list
+func (tm *TweetManager) AddFavourite(user *domain.User, tweet *domain.TextTweet) error {
+
+	tweetList := tm.GetTweetsById(tweet.Id)
+
+	if len(tweetList) == 0 {
+		return fmt.Errorf("Tweet does not exist or is not published")
+	}
+
+	user.AddFavourite(tweet)
+	return nil
 }

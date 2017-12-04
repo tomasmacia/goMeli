@@ -2,16 +2,17 @@ package domain
 
 // User Type User with its name
 type User struct {
-	Name      string
-	Nick      string
-	Email     string
-	Password  string
-	Following []*User
+	Name       string
+	Nick       string
+	Email      string
+	Password   string
+	Following  []*User
+	Favourites []*TextTweet
 }
 
 // NewUser creates and returns a user
 func NewUser(username string, nick string, email string, password string) *User {
-	return &User{username, nick, email, password, make([]*User, 0)}
+	return &User{username, nick, email, password, make([]*User, 0), make([]*TextTweet, 0)}
 }
 
 // Follow Follow another user from service
@@ -42,4 +43,9 @@ func deleteFromUserList(userList []*User, user *User) []*User {
 		}
 	}
 	return newList
+}
+
+// AddFavourite adds a tweet to user's favs list
+func (u *User) AddFavourite(tweet *TextTweet) {
+	u.Favourites = append(u.Favourites, tweet)
 }
