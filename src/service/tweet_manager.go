@@ -94,13 +94,17 @@ func (tm *TweetManager) GetTweetsByUser(user *domain.User) []*domain.TextTweet {
 
 // Register Register one user in service
 func (tm *TweetManager) Register(user *domain.User) {
-	tm.registeredUsers = append(tm.registeredUsers, user)
+	userCopy := new(domain.User)
+	*userCopy = *user
+	tm.registeredUsers = append(tm.registeredUsers, userCopy)
 }
 
 // Log Log one user in service
 func (tm *TweetManager) Log(user *domain.User) error {
 	if tm.isRegistered(user) {
-		tm.loggedUsers = append(tm.loggedUsers, user)
+		userCopy := new(domain.User)
+		*userCopy = *user
+		tm.loggedUsers = append(tm.loggedUsers, userCopy)
 		return nil
 	}
 	return fmt.Errorf("unregistered user attempted to login")
@@ -118,7 +122,7 @@ func (tm *TweetManager) Logout(user *domain.User) error {
 func deleteFromUserList(list []*domain.User, user *domain.User) []*domain.User {
 	newList := make([]*domain.User, 0)
 	for _, v := range list {
-		if user != v {
+		if user.Name != v.Name {
 			newList = append(newList, v)
 		}
 	}
@@ -137,7 +141,7 @@ func (tm *TweetManager) GetLoggedUsers() []*domain.User {
 
 func (tm *TweetManager) isRegistered(user *domain.User) bool {
 	for _, v := range tm.registeredUsers {
-		if user == v {
+		if user.Name == v.Name {
 			return true
 		}
 	}
@@ -146,7 +150,7 @@ func (tm *TweetManager) isRegistered(user *domain.User) bool {
 
 func (tm *TweetManager) isLogged(user *domain.User) bool {
 	for _, v := range tm.loggedUsers {
-		if user == v {
+		if user.Name == v.Name {
 			return true
 		}
 	}

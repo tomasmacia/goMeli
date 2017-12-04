@@ -31,9 +31,6 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 	manager.PublishTweet(tweet)
 
 	// Validation
-	fmt.Println("DEBUG")
-	fmt.Println(manager.GetTweets())
-	fmt.Println("DEBUG")
 	publishedTweet := manager.GetTweets()[0]
 
 	if publishedTweet.User != user &&
@@ -429,7 +426,7 @@ func TestEditTweet(t *testing.T) {
 	}
 }
 
-func TestReferences(t *testing.T) {
+func TestTweetReferences(t *testing.T) {
 	var manager service.TweetManager
 	manager.InitializeService()
 	manager.Register(userTest)
@@ -439,6 +436,31 @@ func TestReferences(t *testing.T) {
 
 	if tweetTest.Text == "Changed" {
 		t.Errorf("Original tweet from tweet_manager_test changed when it shouldn't have")
+	}
+}
+
+func TestRegisterReferences(t *testing.T) {
+	var manager service.TweetManager
+	manager.InitializeService()
+	manager.Register(userTest)
+	user := manager.GetUsers()[0]
+	user.Nick = "Alaasddf"
+
+	if userTest.Nick == "Alaasddf" {
+		t.Errorf("Original user from tweet_manager_test changed after registration when it shouldn't have")
+	}
+}
+
+func TestLogReferences(t *testing.T) {
+	var manager service.TweetManager
+	manager.InitializeService()
+	manager.Register(userTest)
+	manager.Log(userTest)
+	user := manager.GetLoggedUsers()[0]
+	user.Nick = "Alaasddf"
+
+	if userTest.Nick == "Alaasddf" {
+		t.Errorf("Original user from tweet_manager_test changed after logging when it shouldn't have")
 	}
 }
 
