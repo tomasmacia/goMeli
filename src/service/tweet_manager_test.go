@@ -599,3 +599,54 @@ func TestCanGetATimeLineFromUsersYouFollowButNowIsOnlyOne(t *testing.T) {
 		t.Errorf("Expected tweets should be 1 but is %v", len(manager.GetTimeline(userTest)))
 	}
 }
+
+func TestOneUserCanRetweetAnotherUsersTweet(t *testing.T) {
+
+	// Initialization
+	var manager service.TweetManager
+	manager.InitializeService()
+
+	user := domain.NewUser("Juan", "Juan", "Juan", "Juan")
+	tweet := domain.NewTextTweet(user, "Hey there!")
+
+	manager.Register(userTest)
+	manager.Register(user)
+	manager.Log(userTest)
+	manager.Log(user)
+
+	manager.PublishTweet(tweet)
+	manager.PublishTweet(tweetTest)
+	manager.Retweet(userTest, tweet)
+
+	if len(manager.GetTweetsByUser(userTest)) != 2 {
+		t.Errorf("Expected tweets should be 2 but is %d", len(manager.GetTweetsByUser(userTest)))
+	}
+
+}
+
+func TestOneUserCantRetweetAnotherUsersUnpublishedTweet(t *testing.T) {
+
+	// Initialization
+	var manager service.TweetManager
+	manager.InitializeService()
+
+	user := domain.NewUser("Juan", "Juan", "Juan", "Juan")
+	tweet := domain.NewTextTweet(user, "Hey there!")
+
+	manager.Register(userTest)
+	manager.Register(user)
+	manager.Log(userTest)
+	manager.Log(user)
+
+	manager.PublishTweet(tweetTest)
+	err := manager.Retweet(userTest, tweet)
+
+	if len(manager.GetTweetsByUser(userTest)) != 1 {
+		t.Errorf("Expected tweets should be 1 but is %d", len(manager.GetTweetsByUser(userTest)))
+	}
+
+	if err == nil {
+		t.Errorf("Expected error: tweet is not published")
+	}
+
+}

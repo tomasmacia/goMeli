@@ -237,3 +237,20 @@ func (tm *TweetManager) GetTimeline(user *domain.User) []*domain.TextTweet {
 	}
 	return timeline
 }
+
+// Retweet Adds another user's tweet to your list of tweets
+func (tm *TweetManager) Retweet(user *domain.User, tweet *domain.TextTweet) error {
+
+	tweetList := tm.GetTweetsById(tweet.Id)
+	//fmt.Print(len(tweetList))
+
+	if len(tweetList) == 0 {
+		return fmt.Errorf("Tweet does not exist or is not published")
+	}
+
+	//fmt.Print("hola")
+
+	tm.tweets[user] = append(tm.tweets[user], tweet)
+	return nil
+
+}

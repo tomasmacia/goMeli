@@ -4,6 +4,8 @@ import (
 	"time"
 )
 
+var nextId int
+
 // TextTweet Type Tweet which contains user and text of tweet
 type TextTweet struct {
 	Id   int
@@ -30,6 +32,12 @@ type Tweeter interface {
 	String() string
 }
 
+func giveNextID() int {
+	returnID := nextId
+	nextId++
+	return returnID
+}
+
 // NewTweet  NewTweet creates and returns a tweet
 func NewTweet(user *User, text string) *TextTweet {
 	return NewTextTweet(user, text)
@@ -37,17 +45,17 @@ func NewTweet(user *User, text string) *TextTweet {
 
 // NewTextTweet NewTextTweet creates and returns a text tweet
 func NewTextTweet(user *User, text string) *TextTweet {
-	return &TextTweet{0, user, text, nil}
+	return &TextTweet{giveNextID(), user, text, nil}
 }
 
 // NewImageTweet NewImageTweet creates and returns a new image tweet
 func NewImageTweet(user *User, text string, image string) *ImageTweet {
-	return &ImageTweet{TextTweet{0, user, text, nil}, image}
+	return &ImageTweet{TextTweet{giveNextID(), user, text, nil}, image}
 }
 
 // NewQuoteTweet NewQuoteTweet creates and returns a new  tweet
 func NewQuoteTweet(user *User, text string, tweet *TextTweet) *QuoteTweet {
-	return &QuoteTweet{TextTweet{0, user, text, nil}, tweet}
+	return &QuoteTweet{TextTweet{giveNextID(), user, text, nil}, tweet}
 }
 
 // PrintableTweet Prints text from TextTweet
