@@ -24,6 +24,16 @@ func (u *User) Unfollow(user *User) {
 	u.Following = deleteFromUserList(u.Following, user)
 }
 
+// IsFollowing returns a bool if user follows the user send as parameter
+func (u *User) IsFollowing(user *User) bool {
+	for _, eachuser := range u.Following {
+		if eachuser == user {
+			return true
+		}
+	}
+	return false
+}
+
 func deleteFromUserList(userList []*User, user *User) []*User {
 	newList := make([]*User, 0)
 	for _, u := range userList {

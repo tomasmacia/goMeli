@@ -220,3 +220,16 @@ func (tm *TweetManager) EditTweet(tweetToEdit *domain.TextTweet, newText string)
 	}
 	return nil
 }
+
+// GetTimeline returns a list of tweets of users followed by user send by param and their own
+func (tm *TweetManager) GetTimeline(user *domain.User) []*domain.TextTweet {
+	timeline := make([]*domain.TextTweet, 0)
+	for user, tweetList := range tm.tweets {
+		for _, tweet := range tweetList {
+			if tweet.User == user || user.IsFollowing(tweet.User) {
+				timeline = append(timeline, tweet)
+			}
+		}
+	}
+	return timeline
+}

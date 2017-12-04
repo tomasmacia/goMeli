@@ -507,3 +507,73 @@ func TestCanGetAStringFromATweet(t *testing.T) {
 	}
 
 }
+
+func TestCanGetATimeLineWithUserTweets(t *testing.T) {
+
+	// Initialization
+	var manager service.TweetManager
+	manager.InitializeService()
+
+	manager.Register(userTest)
+	manager.Log(userTest)
+
+	manager.PublishTweet(tweetTest)
+
+	if len(manager.GetTimeline(userTest)) != 1 {
+		t.Errorf("Expected tweets should be 1 but is %v", len(manager.GetTimeline(userTest)))
+	}
+}
+
+func TestCanGetATimeLineFromUsersYouFollow(t *testing.T) {
+
+	// Initialization
+	var manager service.TweetManager
+	manager.InitializeService()
+
+	user := domain.NewUser("Juan", "Juan", "Juan", "Juan")
+	tweet := domain.NewTextTweet(user, "Hey there!")
+
+	manager.Register(userTest)
+	manager.Register(user)
+	manager.Log(userTest)
+	manager.Log(user)
+
+	manager.PublishTweet(tweetTest)
+	manager.PublishTweet(tweet)
+
+	manager.Follow(userTest, user)
+
+	if len(manager.GetFollowed(userTest)) != 1 {
+		t.Errorf("userTest is following 1 user but currently following %v", len(manager.GetFollowed(userTest)))
+	}
+
+	if len(manager.GetTimeline(userTest)) != 2 {
+		t.Errorf("Expected tweets should be 2 but is %v", len(manager.GetTimeline(userTest)))
+	}
+}
+
+func TestCanGetATimeLineFromUsersYouFollowButNowIsOnlyOne(t *testing.T) {
+
+	// Initialization
+	var manager service.TweetManager
+	manager.InitializeService()
+
+	user := domain.NewUser("Juan", "Juan", "Juan", "Juan")
+	tweet := domain.NewTextTweet(user, "Hey there!")
+
+	manager.Register(userTest)
+	manager.Register(user)
+	manager.Log(userTest)
+	manager.Log(user)
+
+	manager.Follow(userTest, user)
+	manager.PublishTweet(tweet)
+
+	if len(manager.GetFollowed(userTest)) != 1 {
+		t.Errorf("userTest is following 1 user but currently following %v", len(manager.GetFollowed(userTest)))
+	}
+
+	if len(manager.GetTimeline(userTest)) != 1 {
+		t.Errorf("Expected tweets should be 1 but is %v", len(manager.GetTimeline(userTest)))
+	}
+}
